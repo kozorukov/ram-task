@@ -1,14 +1,22 @@
 package app.ram;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class RandomAccessMemoryImpl implements RandomAccessMemory {
 
     private final int maxMemoryAmount;
 
     private final List<Boolean> memory;
+
+    public RandomAccessMemoryImpl(int maxMemoryAmount) {
+        this.maxMemoryAmount = maxMemoryAmount;
+        this.memory = new ArrayList<>(Collections.nCopies(maxMemoryAmount, false));
+    }
 
     @Override
     public void setMemory(int memoryAmount) {
@@ -18,7 +26,7 @@ public class RandomAccessMemoryImpl implements RandomAccessMemory {
         for (int i = 0; i < memory.size(); i++) {
             if (isEmpty(memory.subList(i, i + memoryAmount))) {
                 for (int j = i; j < i + memoryAmount; j++) {
-                   memory.set(j, true);
+                    memory.set(j, true);
                 }
                 break;
             }
@@ -27,7 +35,7 @@ public class RandomAccessMemoryImpl implements RandomAccessMemory {
     }
 
     private int getFreeMemoryAmount() {
-        var usefulMemory =  memory.stream()
+        var usefulMemory = memory.stream()
                 .filter(element -> element)
                 .toList()
                 .size();
@@ -52,7 +60,7 @@ public class RandomAccessMemoryImpl implements RandomAccessMemory {
     }
 
     @Override
-    public void cleanMemory(int from, int to) {
+    public void freeMemory(int from, int to) {
         for (int i = from; i < to + 1; i++) {
             memory.set(i, false);
         }
@@ -68,12 +76,7 @@ public class RandomAccessMemoryImpl implements RandomAccessMemory {
     }
 
     @Override
-    public void cleanMemory() {
+    public void freeMemory() {
         Collections.fill(memory, Boolean.FALSE);
-    }
-
-    public RandomAccessMemoryImpl(int maxMemoryAmount) {
-        this.maxMemoryAmount = maxMemoryAmount;
-        this.memory = new ArrayList<>(Collections.nCopies(maxMemoryAmount, false));
     }
 }
